@@ -137,6 +137,7 @@ class OpenVPN {
     List<String>? bypassPackages,
     String? serverAddress,
     bool certIsRequired = false,
+    bool isKillSwitchEnabled = false, // Add this parameter
   }) {
     if (!initialized) throw ("OpenVPN need to be initialized");
     if (!certIsRequired) config += "client-cert-not-required";
@@ -149,7 +150,8 @@ class OpenVPN {
         "username": username,
         "password": password,
         "server_address": serverAddress,
-        "bypass_packages": bypassPackages ?? []
+        "bypass_packages": bypassPackages ?? [],
+        "is_kill_switch_enabled": isKillSwitchEnabled, // Pass to native code
       });
     } on PlatformException catch (e) {
       throw ArgumentError(e.message);
@@ -164,6 +166,16 @@ class OpenVPN {
       _vpnStatusTimer?.cancel();
       _vpnStatusTimer = null;
     }
+  }
+
+  ///Applies kill-switch
+  void applyKillSwitch() {
+    _channelControl.invokeMethod("applyKillSwitch");
+  }
+
+  ///Removes kill-switch
+  void removeKillSwitch() {
+    _channelControl.invokeMethod("removeKillSwitch");
   }
 
   ///Check if connected to vpn

@@ -128,12 +128,12 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
                         result.error("-1", "VPNEngine need to be initialize", "");
 
                     
-                    Boolean applyKillSwitch = call.argument("apply_kill_switch");
-                    if (applyKillSwitch == null) {
-                        applyKillSwitch = false;
+                    Boolean removeKillSwitchToo = call.argument("remove_kill_switch_too");
+                    if (removeKillSwitchToo == null) {
+                        removeKillSwitchToo = true;
                     }
 
-                    vpnHelper.stopVPN(applyKillSwitch);
+                    vpnHelper.stopVPN(removeKillSwitchToo);
                     updateStage("disconnected");
                     break;
                 case "connect":

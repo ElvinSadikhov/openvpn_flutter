@@ -164,11 +164,11 @@ class OpenVPN {
   ///
   ///applyKillSwitch : apply kill-switch when disconnecting
   Future<void> disconnect({
-    bool applyKillSwitch = false,
+    bool removeKillSwitchToo = true,
   }) async {
     _tempDateTime = null;
     await _channelControl.invokeMethod("disconnect", {
-      "apply_kill_switch": applyKillSwitch,
+      "remove_kill_switch_too": removeKillSwitchToo,
     });
     if (_vpnStatusTimer?.isActive ?? false) {
       _vpnStatusTimer?.cancel();

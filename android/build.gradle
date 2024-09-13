@@ -46,6 +46,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.ElvinSadikhov:openvpn_library:3e0670f'
+    implementation 'com.github.ElvinSadikhov:openvpn_library:ce4aa6f'
     implementation 'androidx.annotation:annotation:1.8.2'
 }

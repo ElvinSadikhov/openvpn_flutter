@@ -129,6 +129,8 @@ class OpenVPN {
   ///username & password : set your username and password if your config file has auth-user-pass
   ///
   ///bypassPackages : exclude some apps to access/use the VPN Connection, it was List<String> of applications package's name (Android Only)
+  ///
+  ///isKillSwitchEnabled : enables kill-switch on internal problems
   Future connect(
     String config,
     String name, {
@@ -137,7 +139,7 @@ class OpenVPN {
     List<String>? bypassPackages,
     String? serverAddress,
     bool certIsRequired = false,
-    bool isKillSwitchEnabled = false, // Add this parameter
+    bool isKillSwitchEnabled = false,
   }) {
     if (!initialized) throw ("OpenVPN need to be initialized");
     if (!certIsRequired) config += "client-cert-not-required";
@@ -159,9 +161,15 @@ class OpenVPN {
   }
 
   ///Disconnect from VPN
-  void disconnect() {
+  ///
+  ///applyKillSwitch : apply kill-switch when disconnecting
+  Future<void> disconnect({
+    bool applyKillSwitch = false,
+  }) async {
     _tempDateTime = null;
-    _channelControl.invokeMethod("disconnect");
+    await _channelControl.invokeMethod("disconnect", {
+      "apply_kill_switch": applyKillSwitch,
+    });
     if (_vpnStatusTimer?.isActive ?? false) {
       _vpnStatusTimer?.cancel();
       _vpnStatusTimer = null;

@@ -177,13 +177,13 @@ class OpenVPN {
   }
 
   ///Applies kill-switch
-  void applyKillSwitch() {
-    _channelControl.invokeMethod("applyKillSwitch");
+  Future<dynamic> applyKillSwitch() {
+    return _channelControl.invokeMethod("applyKillSwitch");
   }
 
   ///Removes kill-switch
-  void removeKillSwitch() {
-    _channelControl.invokeMethod("removeKillSwitch");
+  Future<dynamic> removeKillSwitch() {
+    return _channelControl.invokeMethod("removeKillSwitch");
   }
 
   ///Check if connected to vpn

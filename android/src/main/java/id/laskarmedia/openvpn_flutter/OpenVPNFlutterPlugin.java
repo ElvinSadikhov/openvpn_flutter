@@ -37,6 +37,7 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
     private static final String METHOD_CHANNEL_VPN_CONTROL = "id.laskarmedia.openvpn_flutter/vpncontrol";
 
     private static String config = "", username = "", password = "", name = "";
+    private static Boolean isKillSwitchEnabled = false;
 
     private static ArrayList<String> bypassPackages;
     @SuppressLint("StaticFieldLeak")
@@ -58,7 +59,7 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
         }
 
         if (granted && vpnHelper != null && config != null && !config.isEmpty()) {
-            vpnHelper.startVPN(config, username, password, name, bypassPackages);
+            vpnHelper.startVPN(config, username, password, name, bypassPackages, isKillSwitchEnabled);
         }
     }
 
@@ -83,6 +84,23 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
             setResult(result);
 
             switch (call.method) {
+                case "applyKillSwitch":
+                    if (vpnHelper == null) {
+                        result.error("-1", "VPNEngine needs to be initialized", "");
+                        return;
+                    }
+                    vpnHelper.applyKillSwitch();
+                    result.success(true);
+                    break;
+
+                case "removeKillSwitch":
+                    if (vpnHelper == null) {
+                        result.error("-1", "VPNEngine needs to be initialized", "");
+                        return;
+                    }
+                    vpnHelper.removeKillSwitch();
+                    result.success(true);
+                    break;
                 case "status":
                     if (vpnHelper == null) {
                         result.error("-1", "VPNEngine need to be initialize", "");
@@ -123,6 +141,10 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
                     username = call.argument("username");
                     password = call.argument("password");
                     bypassPackages = call.argument("bypass_packages");
+                    isKillSwitchEnabled = call.argument("is_kill_switch_enabled");
+                    if (isKillSwitchEnabled == null) {
+                        isKillSwitchEnabled = false;
+                    }
 
                     if (config == null) {
                         result.error("-2", "OpenVPN Config is required", "");
@@ -134,7 +156,7 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
                         activity.startActivityForResult(permission, 24);
                         return;
                     }
-                    vpnHelper.startVPN(config, username, password, name, bypassPackages);
+                    vpnHelper.startVPN(config, username, password, name, bypassPackages, isKillSwitchEnabled);
                     break;
                 case "stage":
                     if (vpnHelper == null) {

@@ -41,10 +41,11 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
     }
 }
 
 dependencies {
-    implementation 'com.github.ElvinSadikhov:openvpn_library:bb97cd3'
+    implementation 'com.github.ElvinSadikhov:openvpn_library:844c980'
+    implementation 'androidx.annotation:annotation:1.8.2'
 }

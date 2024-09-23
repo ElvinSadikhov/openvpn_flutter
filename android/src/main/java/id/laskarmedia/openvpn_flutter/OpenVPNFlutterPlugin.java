@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.blinkt.openvpn.OnVPNSettingsStatusTempListener;
 import de.blinkt.openvpn.OnVPNStatusChangeListener;
 import de.blinkt.openvpn.VPNHelper;
 import de.blinkt.openvpn.core.OpenVPNService;
@@ -90,24 +91,11 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
                         result.error("-1", "VPNEngine needs to be initialized", "");
                         return;
                     }
-                    vpnHelper.setOnVPNStatusChangeListener(new OnVPNStatusChangeListener() {
-                        @Override
-                        public void onVPNStatusChanged(String status) {
-                            // Do nothing
-                        }
-
-                        @Override
-                        public void onConnectionStatusChanged(String duration, String lastPacketReceive, String byteIn, String byteOut) {
-                            // Do nothing
-                        }
-
-                        @Override
-                        public void onGotVpnStatus(Boolean isAlwaysOn, Boolean isLockdownEnabled) {
-                            final Map<String, Object> vpnStatus = new HashMap<>();
-                            vpnStatus.put("isAlwaysOn", isAlwaysOn);
-                            vpnStatus.put("isLockdownEnabled", isLockdownEnabled);
-                            result.success(vpnStatus);
-                        }
+                    vpnHelper.setOnVPNSettingsStatusTempListener((isAlwaysOn, isLockdownEnabled) -> {
+                        final Map<String, Object> vpnStatus = new HashMap<>();
+                        vpnStatus.put("isAlwaysOn", isAlwaysOn);
+                        vpnStatus.put("isLockdownEnabled", isLockdownEnabled);
+                        result.success(vpnStatus);
                     });
                     vpnHelper.getVpnSettingsStatus();
                     break;
@@ -129,13 +117,6 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
                         @Override
                         public void onConnectionStatusChanged(String duration, String lastPacketReceive, String byteIn, String byteOut) {
 
-                        }
-                        @Override
-                        public void onGotVpnStatus(Boolean isAlwaysOn, Boolean isLockdownEnabled) {
-                            Map<String, Object> vpnStatus = new HashMap<>();
-                            vpnStatus.put("isAlwaysOn", isAlwaysOn);
-                            vpnStatus.put("isLockdownEnabled", isLockdownEnabled);
-                            result.success(vpnStatus);
                         }
                     });
                     result.success(updateVPNStages());

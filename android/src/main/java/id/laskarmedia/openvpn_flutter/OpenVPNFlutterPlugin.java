@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.blinkt.openvpn.OnVPNStatusChangeListener;
 import de.blinkt.openvpn.VPNHelper;
@@ -83,6 +85,32 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
             setResult(result);
 
             switch (call.method) {
+                case "getVpnSettingsStatus":
+                    if (vpnHelper == null) {
+                        result.error("-1", "VPNEngine needs to be initialized", "");
+                        return;
+                    }
+                    vpnHelper.setOnVPNStatusChangeListener(new OnVPNStatusChangeListener() {
+                        @Override
+                        public void onVPNStatusChanged(String status) {
+                            // Do nothing
+                        }
+
+                        @Override
+                        public void onConnectionStatusChanged(String duration, String lastPacketReceive, String byteIn, String byteOut) {
+                            // Do nothing
+                        }
+
+                        @Override
+                        public void onGotVpnStatus(Boolean isAlwaysOn, Boolean isLockdownEnabled) {
+                            final Map<String, Object> vpnStatus = new HashMap<>();
+                            vpnStatus.put("isAlwaysOn", isAlwaysOn);
+                            vpnStatus.put("isLockdownEnabled", isLockdownEnabled);
+                            result.success(vpnStatus);
+                        }
+                    });
+                    vpnHelper.getVpnSettingsStatus();
+                    break;
                 case "status":
                     if (vpnHelper == null) {
                         result.error("-1", "VPNEngine need to be initialize", "");
@@ -101,6 +129,13 @@ public class OpenVPNFlutterPlugin implements FlutterPlugin, ActivityAware, Plugi
                         @Override
                         public void onConnectionStatusChanged(String duration, String lastPacketReceive, String byteIn, String byteOut) {
 
+                        }
+                        @Override
+                        public void onGotVpnStatus(Boolean isAlwaysOn, Boolean isLockdownEnabled) {
+                            Map<String, Object> vpnStatus = new HashMap<>();
+                            vpnStatus.put("isAlwaysOn", isAlwaysOn);
+                            vpnStatus.put("isLockdownEnabled", isLockdownEnabled);
+                            result.success(vpnStatus);
                         }
                     });
                     result.success(updateVPNStages());

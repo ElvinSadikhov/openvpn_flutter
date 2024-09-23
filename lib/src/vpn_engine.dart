@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:openvpn_flutter/src/model/vpn_settings_status.dart';
 import 'model/vpn_status.dart';
 
 ///Stages of vpn connections
@@ -163,6 +164,19 @@ class OpenVPN {
     if (_vpnStatusTimer?.isActive ?? false) {
       _vpnStatusTimer?.cancel();
       _vpnStatusTimer = null;
+    }
+  }
+
+  Future<VpnSettingsStatus?> getVpnSettingsStatus() async {
+    try {
+      final Map<dynamic, dynamic> result = await _channelControl.invokeMethod('getVpnSettingsStatus');
+      return VpnSettingsStatus(
+        isAlwaysOn: result['isAlwaysOn'] as bool?,
+        isLockdownEnabled: result['isLockdownEnabled'] as bool?,
+      );
+    } catch (e) {
+      print('Failed to get VPN status: $e');
+      return null;
     }
   }
 

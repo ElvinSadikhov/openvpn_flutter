@@ -46,5 +46,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.ElvinSadikhov:openvpn_library:1f38619db8738af8fe5f0b9ba2e24f275c38ad71'
+    implementation 'com.github.ElvinSadikhov:openvpn_library:01d883c09815e06921a59dcab02950f95dc69d10'
 }

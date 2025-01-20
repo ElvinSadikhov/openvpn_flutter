@@ -1,45 +1,45 @@
 PODS:
   - Flutter (1.0.0)
-  - openvpn_flutter (0.0.1):
+  - skvpn_flutter (0.0.1):
     - Flutter
-  - OpenVPNAdapter (0.7.0):
-    - OpenVPNAdapter/ASIO (= 0.7.0)
-    - OpenVPNAdapter/LZ4 (= 0.7.0)
-    - OpenVPNAdapter/mbedTLS (= 0.7.0)
-    - OpenVPNAdapter/OpenVPN3 (= 0.7.0)
-    - OpenVPNAdapter/OpenVPNAdapter (= 0.7.0)
-    - OpenVPNAdapter/OpenVPNClient (= 0.7.0)
-  - OpenVPNAdapter/ASIO (0.7.0)
-  - OpenVPNAdapter/LZ4 (0.7.0)
-  - OpenVPNAdapter/mbedTLS (0.7.0)
-  - OpenVPNAdapter/OpenVPN3 (0.7.0)
-  - OpenVPNAdapter/OpenVPNAdapter (0.7.0)
-  - OpenVPNAdapter/OpenVPNClient (0.7.0)
+  - SkVPNAdapter (0.8.0):
+    - SkVPNAdapter/ASIO (= 0.8.0)
+    - SkVPNAdapter/LZ4 (= 0.8.0)
+    - SkVPNAdapter/mbedTLS (= 0.8.0)
+    - SkVPNAdapter/SkVPN3 (= 0.8.0)
+    - SkVPNAdapter/SkVPNAdapter (= 0.8.0)
+    - SkVPNAdapter/SkVPNClient (= 0.8.0)
+  - SkVPNAdapter/ASIO (0.8.0)
+  - SkVPNAdapter/LZ4 (0.8.0)
+  - SkVPNAdapter/mbedTLS (0.8.0)
+  - SkVPNAdapter/SkVPN3 (0.8.0)
+  - SkVPNAdapter/SkVPNAdapter (0.8.0)
+  - SkVPNAdapter/SkVPNClient (0.8.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - openvpn_flutter (from `.symlinks/plugins/openvpn_flutter/ios`)
-  - OpenVPNAdapter (from `https://github.com/ss-abramchuk/OpenVPNAdapter.git`, tag `0.7.0`)
+  - skvpn_flutter (from `.symlinks/plugins/skvpn_flutter/ios`)
+  - SkVPNAdapter (from `https://github.com/ElvinSadikhov/SkVPNAdapter.git`, branch `renaming`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  openvpn_flutter:
-    :path: ".symlinks/plugins/openvpn_flutter/ios"
-  OpenVPNAdapter:
-    :git: https://github.com/ss-abramchuk/OpenVPNAdapter.git
-    :tag: 0.7.0
+  skvpn_flutter:
+    :path: ".symlinks/plugins/skvpn_flutter/ios"
+  SkVPNAdapter:
+    :branch: renaming
+    :git: https://github.com/ElvinSadikhov/SkVPNAdapter.git
 
 CHECKOUT OPTIONS:
-  OpenVPNAdapter:
-    :git: https://github.com/ss-abramchuk/OpenVPNAdapter.git
-    :tag: 0.7.0
+  SkVPNAdapter:
+    :commit: 1a422265ddfa58f04cedd5cacd22a181ebf7be7d
+    :git: https://github.com/ElvinSadikhov/SkVPNAdapter.git
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  openvpn_flutter: 35f2b149956e0be8d97c2af221321a495bcd92fa
-  OpenVPNAdapter: 173fcc4c11a3a8a83ae8d250c079cdc5b9fb8ff1
+  skvpn_flutter: 574a2b6cd45429adc5c4fc19841bdaf23b5b29c2
+  SkVPNAdapter: e79ee2a1132d5df6a5b4ee20d0afdb8bae18678b
 
-PODFILE CHECKSUM: 5d2fab7bc91e73ce956cbdc74429938fd611584c
+PODFILE CHECKSUM: 0342d7ccf47e30ec4b975f1ba7f9b67211dbaa9f
 
 COCOAPODS: 1.15.2

@@ -6,20 +6,20 @@
 //
 
 import NetworkExtension
-import OpenVPNAdapter
+import SkVPNAdapter
 import os.log
 
-extension NEPacketTunnelFlow: OpenVPNAdapterPacketFlow {}
+extension NEPacketTunnelFlow: SkVPNAdapterPacketFlow {}
 
 class PacketTunnelProvider: NEPacketTunnelProvider {
     
-    lazy var vpnAdapter: OpenVPNAdapter = {
-        let adapter = OpenVPNAdapter()
+    lazy var vpnAdapter: SkVPNAdapter = {
+        let adapter = SkVPNAdapter()
         adapter.delegate = self
         return adapter
     }()
     
-    let vpnReachability = OpenVPNReachability()
+    let vpnReachability = SkVPNReachability()
     var providerManager: NETunnelProviderManager!
     
     var startHandler: ((Error?) -> Void)?
@@ -56,12 +56,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
         self.groupIdentifier = String(decoding: groupIdentifier, as: UTF8.self)
                     
-        let configuration = OpenVPNConfiguration()
+        let configuration = SkVPNConfiguration()
         configuration.fileContent = ovpnFileContent
         configuration.tunPersist = false
         
-        // Apply OpenVPN configuration.
-        let properties: OpenVPNConfigurationEvaluation
+        // Apply SkVPN configuration.
+        let properties: SkVPNConfigurationEvaluation
         do {
             properties = try vpnAdapter.apply(configuration: configuration)
         } catch {
@@ -73,7 +73,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             guard let username = options?["username"] as? String, let password = options?["password"] as? String else {
                 fatalError()
             }
-            let credentials = OpenVPNCredentials()
+            let credentials = SkVPNCredentials()
             credentials.username = username
             credentials.password = password
             do {
@@ -127,14 +127,14 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
 }
 
-extension PacketTunnelProvider: OpenVPNAdapterDelegate {
-    func openVPNAdapter(_ openVPNAdapter: OpenVPNAdapter, configureTunnelWithNetworkSettings networkSettings: NEPacketTunnelNetworkSettings?, completionHandler: @escaping (Error?) -> Void) {
+extension PacketTunnelProvider: SkVPNAdapterDelegate {
+    func skVPNAdapter(_ skVPNAdapter: SkVPNAdapter, configureTunnelWithNetworkSettings networkSettings: NEPacketTunnelNetworkSettings?, completionHandler: @escaping (Error?) -> Void) {
         networkSettings?.dnsSettings?.matchDomains = [""]
         setTunnelNetworkSettings(networkSettings, completionHandler: completionHandler)
     }
      
     
-    func _updateEvent(_ event: OpenVPNAdapterEvent, openVPNAdapter: OpenVPNAdapter) {
+    func _updateEvent(_ event: SkVPNAdapterEvent, skVPNAdapter: SkVPNAdapter) {
         var toSave = ""
         let formatter = DateFormatter();
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss";
@@ -162,9 +162,9 @@ extension PacketTunnelProvider: OpenVPNAdapterDelegate {
         UserDefaults.init(suiteName: groupIdentifier)?.setValue(toSave, forKey: "vpnStage")
     }
     
-    func openVPNAdapter(_ openVPNAdapter: OpenVPNAdapter, handleEvent event: OpenVPNAdapterEvent, message: String?) {
+    func skVPNAdapter(_ skVPNAdapter: SkVPNAdapter, handleEvent event: SkVPNAdapterEvent, message: String?) {
         PacketTunnelProvider.timeOutEnabled = true;
-        _updateEvent(event, openVPNAdapter: openVPNAdapter)
+        _updateEvent(event, skVPNAdapter: skVPNAdapter)
         switch event {
         case .connected:
             PacketTunnelProvider.timeOutEnabled = false;
@@ -192,8 +192,8 @@ extension PacketTunnelProvider: OpenVPNAdapterDelegate {
         }
     }
     
-    func openVPNAdapter(_ openVPNAdapter: OpenVPNAdapter, handleError error: Error) {
-        guard let fatal = (error as NSError).userInfo[OpenVPNAdapterErrorFatalKey] as? Bool, fatal == true else {
+    func skVPNAdapter(_ skVPNAdapter: SkVPNAdapter, handleError error: Error) {
+        guard let fatal = (error as NSError).userInfo[SkVPNAdapterErrorFatalKey] as? Bool, fatal == true else {
             return
         }
         if vpnReachability.isTracking {
@@ -207,6 +207,6 @@ extension PacketTunnelProvider: OpenVPNAdapterDelegate {
         }
     }
     
-    func openVPNAdapter(_ openVPNAdapter: OpenVPNAdapter, handleLogMessage logMessage: String) {
+    func skVPNAdapter(_ skVPNAdapter: SkVPNAdapter, handleLogMessage logMessage: String) {
     }
 }

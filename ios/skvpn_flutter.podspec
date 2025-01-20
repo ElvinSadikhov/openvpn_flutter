@@ -1,13 +1,13 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint openvpn_flutter.podspec` to validate before publishing.
+# Run `pod lib lint skvpn_flutter.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'openvpn_flutter'
+  s.name             = 'skvpn_flutter'
   s.version          = '0.0.1'
-  s.summary          = 'OpenVPN for flutter'
+  s.summary          = 'SkVPN for flutter'
   s.description      = <<-DESC
-OpenVPN for flutter
+SkVPN for flutter
                        DESC
   s.homepage         = 'http://nizwar.github.io/home'
   s.license          = { :file => '../LICENSE' }

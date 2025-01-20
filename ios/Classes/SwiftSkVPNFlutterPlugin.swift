@@ -3,33 +3,35 @@ import UIKit
 import NetworkExtension
 
 @available(iOS 14.0, *)
-public class SwiftOpenVPNFlutterPlugin: NSObject, FlutterPlugin {
+public class SwiftSkVPNFlutterPlugin: NSObject, FlutterPlugin {
     private static var utils : VPNUtils! = VPNUtils()
     
-    private static var EVENT_CHANNEL_VPN_STAGE = "id.laskarmedia.openvpn_flutter/vpnstage"
-    private static var METHOD_CHANNEL_VPN_CONTROL = "id.laskarmedia.openvpn_flutter/vpncontrol"
+    // private static var EVENT_CHANNEL_VPN_STAGE = "id.laskarmedia.openvpn_flutter/vpnstage"
+    private static var EVENT_CHANNEL_VPN_STAGE = "id.laskarmedia.skvpn_flutter/vpnstage"
+    // private static var METHOD_CHANNEL_VPN_CONTROL = "id.laskarmedia.openvpn_flutter/vpncontrol"
+    private static var METHOD_CHANNEL_VPN_CONTROL = "id.laskarmedia.skvpn_flutter/vpncontrol"
      
     public static var stage: FlutterEventSink?
     private var initialized : Bool = false
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let instance = SwiftOpenVPNFlutterPlugin()
+        let instance = SwiftSkVPNFlutterPlugin()
         instance.onRegister(registrar)
     }
     
     public func onRegister(_ registrar: FlutterPluginRegistrar){
-        let vpnControlM = FlutterMethodChannel(name: SwiftOpenVPNFlutterPlugin.METHOD_CHANNEL_VPN_CONTROL, binaryMessenger: registrar.messenger())
-        let vpnStageE = FlutterEventChannel(name: SwiftOpenVPNFlutterPlugin.EVENT_CHANNEL_VPN_STAGE, binaryMessenger: registrar.messenger())
+        let vpnControlM = FlutterMethodChannel(name: SwiftSkVPNFlutterPlugin.METHOD_CHANNEL_VPN_CONTROL, binaryMessenger: registrar.messenger())
+        let vpnStageE = FlutterEventChannel(name: SwiftSkVPNFlutterPlugin.EVENT_CHANNEL_VPN_STAGE, binaryMessenger: registrar.messenger())
         
         vpnStageE.setStreamHandler(StageHandler())
         vpnControlM.setMethodCallHandler({(call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
             switch call.method {
             case "status":
-                SwiftOpenVPNFlutterPlugin.utils.getTraffictStats()
-                result(UserDefaults.init(suiteName: SwiftOpenVPNFlutterPlugin.utils.groupIdentifier)?.string(forKey: "connectionUpdate"))
+                SwiftSkVPNFlutterPlugin.utils.getTraffictStats()
+                result(UserDefaults.init(suiteName: SwiftSkVPNFlutterPlugin.utils.groupIdentifier)?.string(forKey: "connectionUpdate"))
                 break;
             case "stage":
-                result(SwiftOpenVPNFlutterPlugin.utils.currentStatus())
+                result(SwiftSkVPNFlutterPlugin.utils.currentStatus())
                 break;
             case "initialize":
                 let providerBundleIdentifier: String? = (call.arguments as? [String: Any])?["providerBundleIdentifier"] as? String
@@ -53,12 +55,12 @@ public class SwiftOpenVPNFlutterPlugin: NSObject, FlutterPlugin {
                                         details: nil));
                     return;
                 }
-                SwiftOpenVPNFlutterPlugin.utils.groupIdentifier = groupIdentifier
-                SwiftOpenVPNFlutterPlugin.utils.localizedDescription = localizedDescription
-                SwiftOpenVPNFlutterPlugin.utils.providerBundleIdentifier = providerBundleIdentifier
-                SwiftOpenVPNFlutterPlugin.utils.loadProviderManager{(err:Error?) in
+                SwiftSkVPNFlutterPlugin.utils.groupIdentifier = groupIdentifier
+                SwiftSkVPNFlutterPlugin.utils.localizedDescription = localizedDescription
+                SwiftSkVPNFlutterPlugin.utils.providerBundleIdentifier = providerBundleIdentifier
+                SwiftSkVPNFlutterPlugin.utils.loadProviderManager{(err:Error?) in
                     if err == nil{
-                        result(SwiftOpenVPNFlutterPlugin.utils.currentStatus())
+                        result(SwiftSkVPNFlutterPlugin.utils.currentStatus())
                     }else{
                         result(FlutterError(code: "-4", message: err?.localizedDescription, details: err?.localizedDescription));
                     }
@@ -66,7 +68,7 @@ public class SwiftOpenVPNFlutterPlugin: NSObject, FlutterPlugin {
                 self.initialized = true
                 break;
             case "disconnect":
-                SwiftOpenVPNFlutterPlugin.utils.stopVPN()
+                SwiftSkVPNFlutterPlugin.utils.stopVPN()
                 break;
             case "connect":
                 if !self.initialized {
@@ -85,7 +87,7 @@ public class SwiftOpenVPNFlutterPlugin: NSObject, FlutterPlugin {
                     return
                 }
                 
-                SwiftOpenVPNFlutterPlugin.utils.configureVPN(config: config, username: username, password: password, serverAddress: serverAddress, completion: {(success:Error?) -> Void in
+                SwiftSkVPNFlutterPlugin.utils.configureVPN(config: config, username: username, password: password, serverAddress: serverAddress, completion: {(success:Error?) -> Void in
                     if(success == nil){
                         result(nil)
                     }else{
@@ -106,12 +108,12 @@ public class SwiftOpenVPNFlutterPlugin: NSObject, FlutterPlugin {
     
     class StageHandler: NSObject, FlutterStreamHandler {
         func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-            SwiftOpenVPNFlutterPlugin.utils.stage = events
+            SwiftSkVPNFlutterPlugin.utils.stage = events
             return nil
         }
         
         func onCancel(withArguments arguments: Any?) -> FlutterError? {
-            SwiftOpenVPNFlutterPlugin.utils.stage = nil
+            SwiftSkVPNFlutterPlugin.utils.stage = nil
             return nil
         }
     }

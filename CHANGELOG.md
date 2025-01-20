@@ -9,9 +9,9 @@
 * Solving #105, #29, #99
 * Update examples to support flutter latest flutter (3.22.2 tested)
 ## 1.2.2
-* Update openvpnlib
+* Update skvpnlib
 ## 1.2.1
-* Update openvpnlib
+* Update skvpnlib
 ## 1.2.0+1
 * Update docs
 ## 1.2.0

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:openvpn_flutter/openvpn_flutter.dart';
+import 'package:skvpn_flutter/skvpn_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,13 +17,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late OpenVPN engine;
+  late SkVPN engine;
   VpnStatus? status;
   String? stage;
   bool _granted = false;
   @override
   void initState() {
-    engine = OpenVPN(
+    engine = SkVPN(
       onVpnStatusChanged: (data) {
         setState(() {
           status = data;
@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
     engine.initialize(
       groupIdentifier: "group.com.laskarmedia.vpn",
       providerBundleIdentifier:
-          "id.laskarmedia.openvpnFlutterExample.VPNExtension",
+          "id.laskarmedia.skvpnFlutterExample.VPNExtension",
       localizedDescription: "VPN by Nizwar",
       lastStage: (stage) {
         setState(() {

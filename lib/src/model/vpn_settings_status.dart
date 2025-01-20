@@ -2,5 +2,10 @@ class VpnSettingsStatus {
   final bool? isAlwaysOn;
   final bool? isLockdownEnabled;
 
-  VpnSettingsStatus({required this.isAlwaysOn, required this.isLockdownEnabled});
+  VpnSettingsStatus({
+    required this.isAlwaysOn,
+    required this.isLockdownEnabled,
+  });
+
+  bool get isOn => (isAlwaysOn ?? false) && (isLockdownEnabled ?? false);
 }

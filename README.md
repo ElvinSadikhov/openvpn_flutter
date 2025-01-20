@@ -1,4 +1,4 @@
-Connect OpenVPN service with Flutter, Issues and PRs are very welcome!
+Connect SkVPN service with Flutter, Issues and PRs are very welcome!
 
 ## Android Setup
 ### <b>1. Permission handler</b>
@@ -6,17 +6,17 @@ Connect OpenVPN service with Flutter, Issues and PRs are very welcome!
 Add this to your onActivityResult in MainActivity.java (if you are using Java)
 
 ```java
-    OpenVPNFlutterPlugin.connectWhileGranted(requestCode == 24 && resultCode == RESULT_OK);
+    SkVPNFlutterPlugin.connectWhileGranted(requestCode == 24 && resultCode == RESULT_OK);
 ```
 So it look like this
 ```java
     ...
-    import id.laskarmedia.openvpn_flutter.OpenVPNFlutterPlugin;
+    import id.laskarmedia.skvpn_flutter.SkVPNFlutterPlugin;
     ...
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        OpenVPNFlutterPlugin.connectWhileGranted(requestCode == 24 && resultCode == RESULT_OK);
+        SkVPNFlutterPlugin.connectWhileGranted(requestCode == 24 && resultCode == RESULT_OK);
         super.onActivityResult(requestCode, resultCode, data);
     }
 ```
@@ -25,15 +25,15 @@ So it look like this
 Add this to your onAcivityResult in MainActivity.kt (if you are using Kotlin)
 
 ```kotlin
-    OpenVPNFlutterPlugin.connectWhileGranted(requestCode == 24 && resultCode == RESULT_OK);
+    SkVPNFlutterPlugin.connectWhileGranted(requestCode == 24 && resultCode == RESULT_OK);
 ```
 So it look like this
 ```kotlin
    ...
-    import id.laskarmedia.openvpn_flutter.OpenVPNFlutterPlugin
+    import id.laskarmedia.skvpn_flutter.SkVPNFlutterPlugin
    ...
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        OpenVPNFlutterPlugin.connectWhileGranted(requestCode == 24 && resultCode == RESULT_OK)
+        SkVPNFlutterPlugin.connectWhileGranted(requestCode == 24 && resultCode == RESULT_OK)
         super.onActivityResult(requestCode, resultCode, data)
     }
 ```
@@ -60,11 +60,11 @@ Add the following lines to your Podfile (`ios/Podfile`)
 ```dart
 target 'VPNExtension' do
   use_frameworks!
-  pod 'OpenVPNAdapter', :git => 'https://github.com/ss-abramchuk/OpenVPNAdapter.git', :tag => '0.8.0'
+  pod 'SkVPNAdapter', :git => 'https://github.com/ss-abramchuk/SkVPNAdapter.git', :tag => '0.8.0'
 end
 ```
 
-Open VPNExtension > PacketTunnelProvider.swift and copy paste this script <a href="https://raw.githubusercontent.com/nizwar/openvpn_flutter/master/example/ios/VPNExtension/PacketTunnelProvider.swift">PacketTunnelProvider.swift</a>
+Open VPNExtension > PacketTunnelProvider.swift and copy paste this script <a href="https://raw.githubusercontent.com/nizwar/skvpn_flutter/master/example/ios/VPNExtension/PacketTunnelProvider.swift">PacketTunnelProvider.swift</a>
 
 <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhPf7Vl_8LPYMTTCn0UbpR3f3qzaFPFRMikSg8xetWRyfTuViq6o3fdrjU4-jD-xZtkOZV_i2WoNXkcHLn7znHengHZGgtlJlNbNk6vjNYgI2jYg8ToOYIQjR7QBd443ee4GqpEww0FYPrIiIpabUthpur6SakiPJM1dsDNCBW9ROWixuEzrk61aIod=s600">
 
@@ -76,17 +76,17 @@ You must use iOS Devices instead of Simulator to connect
 ## Recipe
 
 ### Initialize
-Before start, you have to initialize the OpenVPN plugin.
+Before start, you have to initialize the SkVPN plugin.
 
 ```dart
-    late OpenVPN openvpn;
+    late SkVPN skvpn;
 
     @override
     void initState() {
-        openvpn = OpenVPN(onVpnStatusChanged: _onVpnStatusChanged, onVpnStageChanged: _onVpnStageChanged);
-        openvpn.initialize(
+        skvpn = SkVPN(onVpnStatusChanged: _onVpnStatusChanged, onVpnStageChanged: _onVpnStageChanged);
+        skvpn.initialize(
             groupIdentifier: "GROUP_IDENTIFIER", ///Example 'group.com.laskarmedia.vpn'
-            providerBundleIdentifier: "NETWORK_EXTENSION_IDENTIFIER", ///Example 'id.laskarmedia.openvpnFlutterExample.VPNExtension'
+            providerBundleIdentifier: "NETWORK_EXTENSION_IDENTIFIER", ///Example 'id.laskarmedia.skvpnFlutterExample.VPNExtension'
             localizedDescription: "LOCALIZED_DESCRIPTION" ///Example 'Laskarmedia VPN'
         );
     }
@@ -109,7 +109,7 @@ Before start, you have to initialize the OpenVPN plugin.
 ### Connect to VPN
 ```dart
 void connect() {
-  openvpn.connect(
+  skvpn.connect(
     config,
     name,
     username: username,
@@ -125,7 +125,7 @@ void connect() {
 ### Disconnect 
 ```dart
     void disconnect(){
-        openvpn.disconnect();
+        skvpn.disconnect();
     }
 ```
 
@@ -133,7 +133,7 @@ void connect() {
 # Publishing to Play Store and App Store
 ### Android
 1. You can use appbundle to publish the app
-2. Add this to your files in `android` folder (special thanks to https://github.com/nizwar/openvpn_flutter/issues/10). Otherwise connection will not be
+2. Add this to your files in `android` folder (special thanks to https://github.com/nizwar/skvpn_flutter/issues/10). Otherwise connection will not be
 established in some cases and will siliently report "disconnected" when trying to connect. Most likely it's related to some symbols stripping by
 Google Play.
 ```
@@ -191,9 +191,9 @@ Example by using [permission_handler](https://pub.dev/packages/permission_handle
 2. This plugin DOES use Encryption BUT, It uses Exempt Encryptions
 
 ## Licenses
-* [openvpn_flutter](https://github.com/nizwar/openvpn_flutter/blob/master/LICENSE) for this plugin
-* [ics-openvpn](https://github.com/schwabe/ics-openvpn) for Android Engine 
-* [OpenVPNAdapter](https://github.com/ss-abramchuk/OpenVPNAdapter) for iOS Engine
+* [skvpn_flutter](https://github.com/nizwar/skvpn_flutter/blob/master/LICENSE) for this plugin
+* [ics-skvpn](https://github.com/schwabe/ics-skvpn) for Android Engine 
+* [SkVPNAdapter](https://github.com/ss-abramchuk/SkVPNAdapter) for iOS Engine
 # Love my work?
 Don't forget to give me a 👍 &nbsp;or support me with a cup of ☕️  
 

@@ -1,6 +1,6 @@
-# openvpn_flutter_example
+# skvpn_flutter_example
 
-Demonstrates how to use the openvpn_flutter plugin.
+Demonstrates how to use the skvpn_flutter plugin.
 
 ## Getting Started
 

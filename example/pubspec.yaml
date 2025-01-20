@@ -1,5 +1,5 @@
-name: openvpn_flutter_example
-description: Demonstrates how to use the openvpn_flutter plugin. 
+name: skvpn_flutter_example
+description: Demonstrates how to use the skvpn_flutter plugin. 
 publish_to: 'none' 
 
 environment:
@@ -8,7 +8,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  openvpn_flutter: 
+  skvpn_flutter: 
     path: ../ 
   cupertino_icons: ^1.0.2
 

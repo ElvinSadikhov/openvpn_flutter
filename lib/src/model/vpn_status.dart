@@ -1,53 +1,51 @@
 ///To store datas of VPN Connection's status detail
 class VpnStatus {
   VpnStatus({
-    this.packetsOut,
-    this.byteIn, 
     this.duration,
-    this.byteOut,
     this.connectedOn,
+    this.byteIn,
+    this.byteOut,
     this.packetsIn,
+    this.packetsOut,
   });
-
-  ///Packets out byte usages
-  final String? packetsOut;
-
-  ///Download byte usages  
-  final String? byteIn;
-
-  ///Duration of vpn usage
-  final String? duration;
-
-  ///Upload byte usages
-  final String? byteOut;
 
   ///Latest connection date
   ///Return null if vpn disconnected
   final DateTime? connectedOn;
 
+  ///Duration of vpn usage
+  final String? duration;
+
+  ///Download byte usages
+  final String? byteIn;
+  ///Upload byte usages
+  final String? byteOut;
+
   ///Packets in byte usages
   final String? packetsIn;
 
-  ///Convert to JSON
-  Map<String, dynamic> toJson() => {
-        "packets_out": packetsOut,
-        "byte_in": byteIn,
-        "duration": duration,
-        "byte_out": byteOut,
-        "connected_on": connectedOn,
-        "packets_in": packetsIn,
-      };
+  ///Packets out byte usages
+  final String? packetsOut;
 
   /// VPNStatus as empty data
   factory VpnStatus.empty() => VpnStatus(
-        packetsOut: "0",
-        byteIn: "0",
         duration: "00:00:00",
-        byteOut: "0",
         connectedOn: null,
+        byteIn: "0",
+        byteOut: "0",
         packetsIn: "0",
+        packetsOut: "0",
       );
 
-  @override 
+  ///Convert to JSON
+  Map<String, dynamic> toJson() => {
+        "connected_on": connectedOn,
+        "duration": duration,
+        "byte_in": byteIn,
+        "byte_out": byteOut,
+        "packets_in": packetsIn,
+        "packets_out": packetsOut,
+      };
+  @override
   String toString() => toJson().toString();
 }

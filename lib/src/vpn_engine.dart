@@ -30,12 +30,6 @@ enum VPNStage {
   unknown,
 }
 
-/// Add typedefs at the top
-typedef VpnStatusCallback = void Function(VpnStatus? data);
-typedef VpnStageCallback = void Function(VPNStage stage, String rawStage);
-typedef LastStatusCallback = void Function(VpnStatus status);
-typedef LastStageCallback = void Function(VPNStage stage);
-
 class SkVPN {
   ///Channel's names of _vpnStageSnapshot
   static const String _eventChannelVpnStage =
@@ -75,20 +69,17 @@ class SkVPN {
   VPNStage? _lastStage;
 
   /// is a listener to see vpn status detail
-  final VpnStatusCallback? onVpnStatusChanged;
+  final Function(VpnStatus? data)? onVpnStatusChanged;
 
   /// is a listener to see what stage the connection was
-  final VpnStageCallback? onVpnStageChanged;
+  final Function(VPNStage stage, String rawStage)? onVpnStageChanged;
 
-  /// SkiprVPNAdapter's Constructions, don't forget to implement the listeners
+  /// OpenVPN's Constructions, don't forget to implement the listeners
   /// onVpnStatusChanged is a listener to see vpn status detail
   /// onVpnStageChanged is a listener to see what stage the connection was
-  SkVPN({
-    this.onVpnStageChanged,
-    this.onVpnStatusChanged,
-  });
+  SkVPN({this.onVpnStatusChanged, this.onVpnStageChanged});
 
-  ///This function should be called before any usage of SkiprVPNAdapter
+  ///This function should be called before any usage of OpenVPN
   ///All params required for iOS, make sure you read the plugin's documentation
   ///
   ///
@@ -99,11 +90,11 @@ class SkVPN {
   ///
   ///Will return latest VPNStage
   Future<void> initialize({
-    Function(VPNStage stage)? lastStage,
-    Function(VpnStatus status)? lastStatus,
     String? providerBundleIdentifier,
-    String? groupIdentifier,
     String? localizedDescription,
+    String? groupIdentifier,
+    Function(VpnStatus status)? lastStatus,
+    Function(VPNStage stage)? lastStage,
   }) async {
     if (Platform.isIOS) {
       assert(
@@ -134,7 +125,7 @@ class SkVPN {
 
   ///Connect to VPN
   ///
-  ///config : Your skvpn configuration script, you can find it inside your .ovpn file
+  ///config : Your openvpn configuration script, you can find it inside your .ovpn file
   ///
   ///name : name that will show in user's notification
   ///
@@ -146,26 +137,26 @@ class SkVPN {
   Future connect(
     String config,
     String name, {
-    List<String>? bypassPackages,
     String? username,
-    bool certIsRequired = false,
     String? password,
-    String? serverAddress,
+    List<String>? bypassPackages,
     bool? isNonGoogleDevice,
+    String? serverAddress,
+    bool certIsRequired = false,
   }) {
-    if (!initialized) throw ("SkVPN need to be initialized");
+    if (!initialized) throw ("OpenVPN need to be initialized");
     if (!certIsRequired) config += "client-cert-not-required";
     _tempDateTime = DateTime.now();
 
     try {
       return _channelControl.invokeMethod("connect", {
-        "username": username,
-        "name": name,
-        "is_non_google_device": isNonGoogleDevice ?? false,
-        "password": password,
         "config": config,
-        "bypass_packages": bypassPackages ?? [],
+        "name": name,
+        "username": username,
+        "password": password,
         "server_address": serverAddress,
+        "bypass_packages": bypassPackages ?? [],
+        "is_non_google_device": isNonGoogleDevice ?? false,
       });
     } on PlatformException catch (e) {
       throw ArgumentError(e.message);
@@ -211,51 +202,47 @@ class SkVPN {
     return stage().then((value) async {
       var status = VpnStatus.empty();
       if (value == VPNStage.connected) {
-        status = await _channelControl.invokeMethod("status").then(_onStatusResult);
+        status = await _channelControl.invokeMethod("status").then((value) {
+          if (value == null) return VpnStatus.empty();
+          if (Platform.isIOS) {
+            var splitted = value.split("_");
+            var connectedOn = DateTime.tryParse(splitted[0]);
+            if (connectedOn == null) return VpnStatus.empty();
+            return VpnStatus(
+              connectedOn: connectedOn,
+              duration: _duration(DateTime.now().difference(connectedOn).abs()),
+              packetsIn: splitted[1],
+              packetsOut: splitted[2],
+              byteIn: splitted[3],
+              byteOut: splitted[4],
+            );
+          } else if (Platform.isAndroid) {
+            var data = jsonDecode(value);
+            var connectedOn =
+                DateTime.tryParse(data["connected_on"].toString()) ??
+                    _tempDateTime ??
+                    DateTime.now();
+            String byteIn =
+                data["byte_in"] != null ? data["byte_in"].toString() : "0";
+            String byteOut =
+                data["byte_out"] != null ? data["byte_out"].toString() : "0";
+            if (byteIn.trim().isEmpty) byteIn = "0";
+            if (byteOut.trim().isEmpty) byteOut = "0";
+            return VpnStatus(
+              connectedOn: connectedOn,
+              duration: _duration(DateTime.now().difference(connectedOn).abs()),
+              byteIn: byteIn,
+              byteOut: byteOut,
+              packetsIn: byteIn,
+              packetsOut: byteOut,
+            );
+          } else {
+            throw Exception("Openvpn not supported on this platform");
+          }
+        });
       }
       return status;
     });
-  }
-
-  FutureOr<VpnStatus> _onStatusResult(value) {
-    if (value == null) return VpnStatus.empty();
-  
-    switch (Platform.operatingSystem) {
-      case 'ios':
-        var splitted = value.split("_");
-        var connectedOn = DateTime.tryParse(splitted[0]);
-        if (connectedOn == null) return VpnStatus.empty();
-        return VpnStatus(
-          connectedOn: connectedOn,
-          duration: _duration(DateTime.now().difference(connectedOn).abs()),
-          packetsIn: splitted[1],
-          packetsOut: splitted[2],
-          byteIn: splitted[3],
-          byteOut: splitted[4],
-        );
-      case 'android':
-        var data = jsonDecode(value);
-        var connectedOn =
-            DateTime.tryParse(data["connected_on"].toString()) ??
-                _tempDateTime ??
-                DateTime.now();
-        String byteIn =
-            data["byte_in"] != null ? data["byte_in"].toString() : "0";
-        String byteOut =
-            data["byte_out"] != null ? data["byte_out"].toString() : "0";
-        if (byteIn.trim().isEmpty) byteIn = "0";
-        if (byteOut.trim().isEmpty) byteOut = "0";
-        return VpnStatus(
-          connectedOn: connectedOn,
-          duration: _duration(DateTime.now().difference(connectedOn).abs()),
-          byteIn: byteIn,
-          byteOut: byteOut,
-          packetsIn: byteIn,
-          packetsOut: byteOut,
-        );
-      default:
-        throw Exception("Openvpn not supported on this platform");
-    }
   }
 
   ///Request android permission (Return true if already granted)
